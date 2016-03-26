@@ -1,7 +1,7 @@
 {
     "zepto": "js/lib/zepto",
 
-    "commonCss": "css/common.css",
+    "commonScss": "scss/common.scss",
 
     "webpackLogo": "img/webpack.png"
 }

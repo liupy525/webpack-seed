@@ -9,8 +9,8 @@
 
 console.info('require page b.')
 
-require('commonCss')
-require('../css/b.css')
+require('commonScss')
+require('../scss/b.scss')
 
 require('zepto')
 

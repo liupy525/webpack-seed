@@ -8,10 +8,8 @@
 'use strict';
 
 let path = require('path')
-let fs = require('fs')
 
 let webpack = require('webpack')
-let _ = require('lodash')
 let glob = require('glob')
 
 let ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -27,7 +25,7 @@ let pathMap = require('./src/pathmap.json')
 
 let entries = (() => {
     let jsDir = path.resolve(srcDir, 'js')
-    let entryFiles = glob.sync(jsDir + '/*.{js,jsx}')
+    let entryFiles = glob.sync(jsDir + '/*.js')
     let map = {}
 
     entryFiles.forEach((filePath) => {
@@ -37,7 +35,6 @@ let entries = (() => {
 
     return map;
 }())
-let chunks = Object.keys(entries)
 
 module.exports = (options) => {
     options = options || {}
@@ -76,8 +73,8 @@ module.exports = (options) => {
 
     if(debug) {
         // 开发阶段，css直接内嵌
-        cssLoader = 'style!css'
-        scssLoader = 'style!css!sass'
+        cssLoader = 'style!css?sourceMap'
+        scssLoader = 'style!css?sourceMap!sass?sourceMap'
     } else {
         // 编译阶段，css分离出来单独引入
         cssLoader = ExtractTextPlugin.extract('style', 'css?minimize') // enable minimize
@@ -124,10 +121,6 @@ module.exports = (options) => {
                 {
                     test: /\.(jpe?g|png|gif|svg)$/i,
                     loaders: [
-                        'image?{bypassOnDebug: true, progressive:true, \
-                            optimizationLevel: 3, pngquant:{quality: "65-80", speed: 4}}',
-                        // url-loader更好用，小于10KB的图片会自动转成dataUrl，
-                        // 否则则调用file-loader，参数直接传入
                         'url?limit=10000&name=img/[hash:8].[name].[ext]',
                     ]
                 },
@@ -138,7 +131,7 @@ module.exports = (options) => {
                 {test: /\.(tpl|ejs)$/, loader: 'ejs'},
                 {test: /\.css$/, loader: cssLoader},
                 {test: /\.scss$/, loader: scssLoader},
-                {test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel?presets[]=react,presets[]=es2015'}
+                {test: /\.js$/, exclude: /node_modules/, loader: 'babel?presets[]=es2015'}
             ]
         },
 
@@ -183,6 +176,8 @@ module.exports = (options) => {
 
         config.plugins.push( new webpack.HotModuleReplacementPlugin() )
         config.plugins.push( new webpack.NoErrorsPlugin() )
+
+        config.devtool = 'source-map'
     }
 
     return config

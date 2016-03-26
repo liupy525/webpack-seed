@@ -7,7 +7,7 @@
 
 'use strict';
 
-require('../../css/components/toast.css');
+require('../../scss/components/toast.scss');
 
 console.info('require toast module.');
 
